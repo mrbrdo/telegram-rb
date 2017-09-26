@@ -89,6 +89,10 @@ module Telegram
     # @!attribute raw_to
     #   @return [String] Raw identifier string of the receiver
     attr_accessor :raw_to
+
+    # @!attribute media
+    #   @return [Hash] Media info
+    attr_accessor :media
   end
 
   # Event object, will be created in the process part of {Client}
@@ -163,7 +167,8 @@ module Telegram
 
       message.id = @id
       message.text = @raw_data['text'] ||= ''
-      media = @raw_data['media']
+      message.media = @raw_data['media']
+      media = message.media
       message.type = media ? media['type'] : 'text'
       message.raw_from = @raw_data['from']['peer_id']
       message.from_type = @raw_data['from']['peer_type']
@@ -189,13 +194,13 @@ module Telegram
       if @message.to.nil?
         type = @raw_data['to']['peer_type']
         case type
-        when 'chat', 'encr_chat'
+        when 'chat', 'encr_chat', 'channel'
           chat = TelegramChat.pick_or_new(@client, @raw_data['to'])
           @client.chats << chat unless @client.chats.include?(chat)
-          if type == 'encr_chat' then
-            @message.to = chat
-          else
+          if type == 'chat' then
             @message.from = chat
+          else
+            @message.to = chat
           end
         when 'user'
           user = TelegramContact.pick_or_new(@client, @raw_data['to'])

@@ -1,6 +1,6 @@
 module Telegram
   # Telegram API Implementation
-  # 
+  #
   # @note You must avoid doing direct calls or initializes
   # @see Client
   # @version 0.1.0
@@ -78,7 +78,7 @@ module Telegram
     def update_chats!
       assert!
       callback = Callback.new
-      
+
       collected = 0
       collect_done = Proc.new do |id, data, count|
         collected += 1
@@ -304,7 +304,7 @@ module Telegram
     # @since [0.1.1]
     def download_attachment(type, seq, &callback)
       assert!
-      raise "Type mismatch" unless %w(photo video audio).include?(type)
+      raise "Type mismatch" unless %w(photo video audio document).include?(type)
       @connection.communicate(["load_#{type.to_s}", seq], &callback)
     end
 

@@ -271,11 +271,14 @@ module Telegram
     # @return [TelegramContact] The contact who sent this message
     attr_reader :user
 
-    # @return [String] 
+    # @return [String]
     attr_reader :raw_target
 
     # @return [String] Content type
     attr_reader :content_type
+
+    # @return [Hash] Media data
+    attr_reader :media_data
 
     # @return [TelegramChat] if you were talking in a chat group
     # @return [TelegramContact] if you were talking with contact
@@ -289,11 +292,12 @@ module Telegram
     # @since [0.1.0]
     def initialize(client, event)
       @event = event
-      
+
       @id = event.id
       @raw = event.message.text
       @time = event.time
       @content_type = event.message.type
+      @media_data = event.message.media
 
       @raw_sender = event.message.raw_from
       @raw_receiver = event.message.raw_to
@@ -304,7 +308,7 @@ module Telegram
       @target = case @receiver.type
       when 'user'
         @sender
-      when 'chat', 'encr_chat'
+      when 'chat', 'encr_chat', 'channel'
         @receiver
       end
     end
